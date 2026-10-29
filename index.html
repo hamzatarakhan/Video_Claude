@@ -5,15 +5,19 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>طلعة</title>
 <style>
-  body{font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;padding:16px;background:#f6f6f3;color:#222}
+  :root{--bg:#f6f6f3;--fg:#222;--card:#fff;--muted:#666;--vote:#e8f4ef}
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161816;--fg:#eee;--card:#222522;--muted:#aaa;--vote:#1f3a30}}
+  :root[data-theme="dark"]{--bg:#161816;--fg:#eee;--card:#222522;--muted:#aaa;--vote:#1f3a30}
+  body{font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;padding:16px;background:var(--bg);color:var(--fg)}
   h1{margin:0 0 12px}
   form{display:grid;gap:8px;margin-bottom:16px}
   input,button{font:inherit;padding:10px;border:1px solid #ccc;border-radius:8px}
   button{background:#1b7f5c;color:#fff;border:0;cursor:pointer}
-  .card{background:#fff;border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 1px 3px #0002}
+  input{background:var(--card);color:var(--fg)}
+  .card{background:var(--card);border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 1px 3px #0002}
   .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .card small{color:#666}
-  .vote{background:#e8f4ef;color:#1b7f5c}
+  .card small{color:var(--muted)}
+  .vote{background:var(--vote);color:#1b7f5c}
   .del{background:none;color:#b00;padding:4px}
 </style>
 </head>
@@ -27,8 +31,9 @@
 <div id="list"></div>
 <script>
 // ponytail: localStorage only, no shared voting between devices; add a backend when friends need to vote from their own phones
-let items = JSON.parse(localStorage.tal3a || "[]");
-const save = () => { localStorage.tal3a = JSON.stringify(items); render(); };
+let items = [];
+try { items = JSON.parse(localStorage.tal3a || "[]"); } catch {}
+const save = () => { try { localStorage.tal3a = JSON.stringify(items); } catch {} render(); };
 const esc = s => s.replace(/[&<>"']/g, c => "&#" + c.charCodeAt(0) + ";");
 
 function render() {

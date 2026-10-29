@@ -2,57 +2,148 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>طلعة</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>حسبة الطلعة والبرغر</title>
 <style>
-  :root{--bg:#f6f6f3;--fg:#222;--card:#fff;--muted:#666;--vote:#e8f4ef}
-  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161816;--fg:#eee;--card:#222522;--muted:#aaa;--vote:#1f3a30}}
-  :root[data-theme="dark"]{--bg:#161816;--fg:#eee;--card:#222522;--muted:#aaa;--vote:#1f3a30}
-  body{font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;padding:16px;background:var(--bg);color:var(--fg)}
-  h1{margin:0 0 12px}
-  form{display:grid;gap:8px;margin-bottom:16px}
-  input,button{font:inherit;padding:10px;border:1px solid #ccc;border-radius:8px}
-  button{background:#1b7f5c;color:#fff;border:0;cursor:pointer}
-  input{background:var(--card);color:var(--fg)}
-  .card{background:var(--card);border-radius:12px;padding:12px;margin-bottom:10px;box-shadow:0 1px 3px #0002}
-  .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-  .card small{color:var(--muted)}
-  .vote{background:var(--vote);color:#1b7f5c}
-  .del{background:none;color:#b00;padding:4px}
+:root{--bg:#f5f6f8;--card:#fff;--ink:#17202a;--muted:#687385;--line:#e5e9ef;--accent:#176b52;--accent2:#e7f5ef;--warn:#fff4dc}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Tahoma,Arial,sans-serif}
+.wrap{max-width:900px;margin:auto;padding:22px 14px 48px}.hero{background:linear-gradient(135deg,#123e32,#218565);color:white;border-radius:22px;padding:24px;margin-bottom:16px}
+h1{font-size:26px;margin:0 0 8px}.sub{opacity:.86;font-size:14px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:20px}
+.stat{background:#ffffff18;border:1px solid #ffffff2b;border-radius:14px;padding:12px}.stat small{display:block;opacity:.8;margin-bottom:6px}.stat strong{font-size:21px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:17px;margin:14px 0;box-shadow:0 3px 12px #17202a08}
+.cardhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}h2{font-size:18px;margin:0}.pill{font-size:12px;background:var(--accent2);color:var(--accent);padding:5px 9px;border-radius:20px}
+.rowitem{display:grid;grid-template-columns:28px minmax(100px,1fr) 90px 90px 94px 32px;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.rowitem input[type=text],.rowitem input[type=number],select,.field input{width:100%;min-width:0;border:1px solid var(--line);border-radius:9px;padding:9px;background:#fff;color:var(--ink);font:inherit;font-size:13px}
+.rowitem input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}
+.rowitem .done{text-decoration:line-through;color:var(--muted)}.mini{border:0;background:#f0f2f5;border-radius:8px;padding:8px;cursor:pointer;color:#5a6574}
+.labels{display:grid;grid-template-columns:28px minmax(100px,1fr) 90px 90px 94px 32px;gap:8px;color:var(--muted);font-size:11px;padding:0 0 6px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.btn{border:0;border-radius:10px;padding:10px 14px;background:var(--accent);color:#fff;font:inherit;cursor:pointer}.btn.secondary{background:#edf0f3;color:#263342}.btn.danger{background:#fff0ee;color:#a7352c}
+.field{display:flex;gap:8px;flex-wrap:wrap}.field input{flex:1;min-width:130px}.note{font-size:12px;color:var(--muted);line-height:1.7}.summaryline{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}.summaryline:last-child{border:0}.big{font-size:22px;font-weight:750}.empty{padding:14px;color:var(--muted);text-align:center}
+@media(max-width:650px){.stats{grid-template-columns:1fr 1fr}.stat:last-child{grid-column:span 2}.rowitem{grid-template-columns:24px minmax(80px,1fr) 70px 70px 30px;gap:6px}.rowitem .person{display:none}.labels{grid-template-columns:24px minmax(80px,1fr) 70px 70px 30px;gap:6px}.labels span:nth-child(5){display:none}.rowitem input,.rowitem select{padding:8px 5px;font-size:12px}.rowitem .mini{padding:7px 5px}.hero{padding:20px}.big{font-size:19px}}
 </style>
 </head>
 <body>
-<h1>🚗 طلعة</h1>
-<form id="f">
-  <input id="title" placeholder="وين الطلعة؟ (مثال: كشتة)" required>
-  <input id="when" type="datetime-local" required>
-  <button>أضف اقتراح</button>
-</form>
-<div id="list"></div>
+<div class="wrap">
+  <header class="hero">
+    <h1>🔥 حسبة الطلعة والبرغر</h1>
+    <div class="sub">قائمة التجهيزات والمشتريات والمصاريف — المسؤول عن كل البنود: حمزة</div>
+    <div class="stats">
+      <div class="stat"><small>إجمالي التكلفة</small><strong id="total">0.00 د.أ</strong></div>
+      <div class="stat"><small>تم التجهيز</small><strong id="completed">0 / 0</strong></div>
+      <div class="stat"><small>المتبقي للتجهيز</small><strong id="remaining">0</strong></div>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="cardhead"><h2>🧾 ملخص الحسبة</h2><span class="pill">دينار أردني</span></div>
+    <div class="summaryline"><span>أغراض من البيت</span><strong id="homeTotal">0.00 د.أ</strong></div>
+    <div class="summaryline"><span>مشتريات الطلعة والبرغر</span><strong id="buyTotal">0.00 د.أ</strong></div>
+    <div class="summaryline"><span>عدد البنود</span><strong id="itemCount">0</strong></div>
+    <p class="note">عدّل الأسعار والكميات حسب الحسبة المتفق عليها. الأغراض المتوفرة من البيت محسوبة مجاناً، وتقدر تضيف أو تحذف أي بند.</p>
+  </section>
+
+  <section class="card" data-section="gear">
+    <div class="cardhead"><h2>🍴 عدة الشوي</h2><span class="pill">تجهيزات</span></div>
+    <div class="labels"><span></span><span>الغرض</span><span>السعر</span><span>الكمية</span><span>المسؤول</span><span></span></div>
+    <div class="items">
+      <div class="rowitem"><input type="checkbox" aria-label="تم التجهيز"><input type="text" value="ملقط، معلقة، شوكة، سكين" aria-label="الغرض"><input type="number" min="0" step=".25" value="0" aria-label="السعر"><input type="number" min="1" step="1" value="1" aria-label="الكمية"><input class="person" type="text" value="حمزة" aria-label="المسؤول"><button class="mini" title="حذف البند">×</button></div>
+      <div class="rowitem"><input type="checkbox" aria-label="تم التجهيز"><input type="text" value="قلفز" aria-label="الغرض"><input type="number" min="0" step=".25" value="0" aria-label="السعر"><input type="number" min="1" step="1" value="1" aria-label="الكمية"><input class="person" type="text" value="حمزة" aria-label="المسؤول"><button class="mini" title="حذف البند">×</button></div>
+      <div class="rowitem"><input type="checkbox" aria-label="تم التجهيز"><input type="text" value="كانون" aria-label="الغرض"><input type="number" min="0" step=".25" value="0" aria-label="السعر"><input type="number" min="1" step="1" value="1" aria-label="الكمية"><input class="person" type="text" value="حمزة" aria-label="المسؤول"><button class="mini" title="حذف البند">×</button></div>
+    </div>
+    <div class="actions"><button class="btn secondary add">+ إضافة غرض</button></div>
+  </section>
+
+  <section class="card" data-section="food">
+    <div class="cardhead"><h2>🍔 البرغر والأكل</h2><span class="pill">مشتريات</span></div>
+    <div class="labels"><span></span><span>الغرض</span><span>السعر</span><span>الكمية</span><span>المسؤول</span><span></span></div>
+    <div class="items">
+      <div class="rowitem"><input type="checkbox" aria-label="تم التجهيز"><input type="text" value="برغر" aria-label="الغرض"><input type="number" min="0" step=".25" value="0" aria-label="السعر"><input type="number" min="1" step="1" value="1" aria-label="الكمية"><input class="person" type="text" value="حمزة" aria-label="المسؤول"><button class="mini" title="حذف البند">×</button></div>
+      <div class="rowitem"><input type="checkbox" aria-label="تم التجهيز"><input type="text" value="خبز برغر" aria-label="الغرض"><input type="number" min="0" step=".25" value="0" aria-label="السعر"><input type="number" min="1" step="1" value="1" aria-label="الكمية"><input class="person" type="text" value="حمزة" aria-label="المسؤول"><button class="mini" title="حذف البند">×</button></div>
+      <div class="rowitem"><input type="checkbox" aria-label="تم التجهيز"><input type="text" value="جبنة وصوص" aria-label="الغرض"><input type="number" min="0" step=".25" value="0" aria-label="السعر"><input type="number" min="1" step="1" value="1" aria-label="الكمية"><input class="person" type="text" value="حمزة" aria-label="المسؤول"><button class="mini" title="حذف البند">×</button></div>
+    </div>
+    <div class="actions"><button class="btn secondary add">+ إضافة غرض</button></div>
+  </section>
+
+  <section class="card" data-section="other">
+    <div class="cardhead"><h2>🧃 أغراض ومصاريف إضافية</h2><span class="pill">اختياري</span></div>
+    <div class="labels"><span></span><span>الغرض</span><span>السعر</span><span>الكمية</span><span>المسؤول</span><span></span></div>
+    <div class="items"></div>
+    <div class="actions"><button class="btn secondary add">+ إضافة بند</button></div>
+  </section>
+
+  <div class="actions">
+    <button class="btn" id="export">تنزيل الحسبة CSV</button>
+    <button class="btn secondary" id="reset">إعادة ضبط البنود</button>
+  </div>
+  <p class="note">الحسبة بتنحفظ تلقائياً على نفس الجهاز والمتصفح. الأسعار الافتراضية صفر لأن الأسعار الدقيقة ما كانت ظاهرة عند إنشاء التطبيق.</p>
+</div>
 <script>
-// ponytail: localStorage only, no shared voting between devices; add a backend when friends need to vote from their own phones
-let items = [];
-try { items = JSON.parse(localStorage.tal3a || "[]"); } catch {}
-const save = () => { try { localStorage.tal3a = JSON.stringify(items); } catch {} render(); };
-const esc = s => s.replace(/[&<>"']/g, c => "&#" + c.charCodeAt(0) + ";");
-
-function render() {
-  list.innerHTML = [...items].sort((a, b) => b.votes - a.votes).map(i => `
-    <div class="card"><div class="row">
-      <div><b>${esc(i.title)}</b><br><small>${new Date(i.when).toLocaleString("ar")}</small></div>
-      <div><button class="vote" onclick="vote(${i.id})">👍 ${i.votes}</button>
-      <button class="del" onclick="del(${i.id})">✕</button></div>
-    </div></div>`).join("") || "<p>ما فيه اقتراحات بعد.</p>";
+const initial = document.querySelector('.wrap').innerHTML;
+const money = n => (Number(n)||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' د.أ';
+function update(){
+ let total=0,home=0,buy=0,count=0,done=0;
+ document.querySelectorAll('.card[data-section]').forEach(sec=>{
+   sec.querySelectorAll('.rowitem').forEach(row=>{
+    count++;
+    const inputs=row.querySelectorAll('input');
+    const checked=inputs[0].checked, name=inputs[1].value;
+    const price=Math.max(0,Number(inputs[2].value)||0), qty=Math.max(0,Number(inputs[3].value)||0);
+    const cost=price*qty; total+=cost;
+    if(sec.dataset.section==='gear')home+=cost;else buy+=cost;
+    if(checked)done++;
+    inputs[1].classList.toggle('done',checked);
+   });
+ });
+ document.getElementById('total').textContent=money(total);
+ document.getElementById('homeTotal').textContent=money(home);
+ document.getElementById('buyTotal').textContent=money(buy);
+ document.getElementById('completed').textContent=done+' / '+count;
+ document.getElementById('remaining').textContent=count-done;
+ document.getElementById('itemCount').textContent=count;
+ save();
 }
-const vote = id => { items.find(i => i.id == id).votes++; save(); };
-const del = id => { items = items.filter(i => i.id != id); save(); };
-
-f.onsubmit = e => {
-  e.preventDefault();
-  items.push({ id: Date.now(), title: title.value, when: when.value, votes: 0 });
-  f.reset(); save();
-};
-render();
+function bindRow(row){
+ row.querySelectorAll('input').forEach(el=>el.addEventListener('input',update));
+ row.querySelector('.mini').addEventListener('click',()=>{row.remove();update()});
+}
+function addRow(section){
+ const row=document.createElement('div');row.className='rowitem';
+ row.innerHTML='<input type="checkbox" aria-label="تم التجهيز"><input type="text" placeholder="اسم الغرض" aria-label="الغرض"><input type="number" min="0" step=".25" value="0" aria-label="السعر"><input type="number" min="1" step="1" value="1" aria-label="الكمية"><input class="person" type="text" value="حمزة" aria-label="المسؤول"><button class="mini" title="حذف البند">×</button>';
+ section.querySelector('.items').appendChild(row);bindRow(row);update();row.querySelector('input[type=text]').focus();
+}
+function save(){
+ const data=[];
+ document.querySelectorAll('.card[data-section]').forEach(sec=>{
+  data.push({section:sec.dataset.section,items:[...sec.querySelectorAll('.rowitem')].map(row=>[...row.querySelectorAll('input')].map((el,i)=>i===0?el.checked:el.value))});
+ });
+ try{localStorage.setItem('outingBurgerPlanner',JSON.stringify(data))}catch(e){}
+}
+function restore(){
+ try{
+  const data=JSON.parse(localStorage.getItem('outingBurgerPlanner')||'null');if(!data)return;
+  data.forEach(saved=>{
+   const sec=document.querySelector('[data-section="'+saved.section+'"]');if(!sec)return;
+   sec.querySelector('.items').innerHTML='';
+   saved.items.forEach(vals=>{
+    const row=document.createElement('div');row.className='rowitem';
+    row.innerHTML='<input type="checkbox" aria-label="تم التجهيز"><input type="text" aria-label="الغرض"><input type="number" min="0" step=".25" aria-label="السعر"><input type="number" min="1" step="1" aria-label="الكمية"><input class="person" type="text" aria-label="المسؤول"><button class="mini" title="حذف البند">×</button>';
+    const ins=row.querySelectorAll('input');vals.forEach((v,i)=>{if(i===0)ins[i].checked=!!v;else ins[i].value=v});
+    sec.querySelector('.items').appendChild(row);bindRow(row);
+   });
+  });
+ }catch(e){}
+}
+document.querySelectorAll('.card[data-section] .add').forEach(btn=>btn.addEventListener('click',()=>addRow(btn.closest('.card'))));
+document.getElementById('export').addEventListener('click',()=>{
+ const rows=[['القسم','الغرض','السعر للوحدة','الكمية','الإجمالي','المسؤول','تم التجهيز']];
+ document.querySelectorAll('.card[data-section]').forEach(sec=>sec.querySelectorAll('.rowitem').forEach(row=>{
+  const i=row.querySelectorAll('input');rows.push([sec.querySelector('h2').textContent,i[1].value,i[2].value,i[3].value,(Number(i[2].value)||0)*(Number(i[3].value)||0),i[4].value,i[0].checked?'نعم':'لا']);
+ }));
+ const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8;'}));a.download='حسبة-الطلعة-والبرغر.csv';a.click();URL.revokeObjectURL(a.href);
+});
+document.getElementById('reset').addEventListener('click',()=>{if(confirm('ترجع البنود الافتراضية؟ رح تنمسح التعديلات الحالية.')){localStorage.removeItem('outingBurgerPlanner');location.reload()}});
+restore();document.querySelectorAll('.rowitem').forEach(bindRow);update();
 </script>
 </body>
 </html>
